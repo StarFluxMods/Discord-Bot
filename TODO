@@ -16,6 +16,9 @@
     - Word Blacklist
     - URL Whitelist
     - Welcome Message
+    - Message Logging (Edits, Deletes, Creations)
+    - KitchenDesigner Support
+    - Delete Bot Messages (X)
 
 - Ports
     - Mee6 Levels
