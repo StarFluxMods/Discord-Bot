@@ -32,6 +32,29 @@ module.exports = {
             type: Sequelize.STRING,
         },
     }),
+    UserPermissions: sequelize.define('individual-permissions', {
+        UserID: {
+            type: Sequelize.STRING,
+        },
+        Permission: {
+            type: Sequelize.STRING,
+        },
+    }),
+    BotChannels: sequelize.define('bot-channels', {
+        ChannelID: {
+            type: Sequelize.STRING,
+        },
+    }),
+    LinkWhitelist: sequelize.define('link-whitelist', {
+        Link: {
+            type: Sequelize.STRING,
+        },
+    }),
+    PhraseBlacklist: sequelize.define('phrase-blacklist', {
+        Phrase: {
+            type: Sequelize.STRING,
+        },
+    }),
     PunishmentHistory: sequelize.define('punishment-history', {
         Member: {
             type: Sequelize.STRING,
@@ -108,6 +131,20 @@ module.exports = {
         },
     }),
     Kicks: sequelize.define('punishment-kicks', {
+        Member: {
+            type: Sequelize.STRING,
+        },
+        Time: {
+            type: Sequelize.NUMBER,
+        },
+        Reason: {
+            type: Sequelize.STRING,
+        },
+        Punisher: {
+            type: Sequelize.STRING,
+        },
+    }),
+    Warnings: sequelize.define('punishment-warnings', {
         Member: {
             type: Sequelize.STRING,
         },

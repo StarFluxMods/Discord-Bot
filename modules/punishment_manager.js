@@ -1,13 +1,15 @@
 const SQLManager = require('./sql_manager.js');
 const { EmbedBuilder } = require('discord.js');
 
-module.exports = { embedBuilder, ban, unban, mute, unmute, kick };
+module.exports = { embedBuilder, ban, unban, mute, unmute, kick, warn };
 
 async function addPunishment(member, punisher, type, reason) {
+    punisher = punisher ?? member.client.user;
     await SQLManager.PunishmentHistory.create({ Member: member.id, Punisher: punisher.id, Type: type, Reason: reason, Date: Date.now() });
 }
 
 async function ban(member, reason, length, punisher) {
+    punisher = punisher ?? member.client.user;
     const existingBan = await SQLManager.Bans.findOne({ where: { Member: member.id, Active: true } });
     if (existingBan) {
         return false;
@@ -19,6 +21,7 @@ async function ban(member, reason, length, punisher) {
 }
 
 async function unban(guild, member, punisher, reason) {
+    punisher = punisher ?? member.client.user;
     const existingBan = await SQLManager.Bans.findOne({ where: { Member: member.id, Active: true } });
     if (!existingBan) {
         return false;
@@ -29,6 +32,7 @@ async function unban(guild, member, punisher, reason) {
 }
 
 async function mute(member, reason, length, punisher, role) {
+    punisher = punisher ?? member.client.user;
     const existingMute = await SQLManager.Mutes.findOne({ where: { Member: member.id, Active: true } });
     if (existingMute) {
         return false;
@@ -40,6 +44,7 @@ async function mute(member, reason, length, punisher, role) {
 }
 
 async function unmute(member, punisher, reason, role) {
+    punisher = punisher ?? member.client.user;
     const existingMute = await SQLManager.Mutes.findOne({ where: { Member: member.id, Active: true } });
     if (!existingMute) {
         return false;
@@ -50,14 +55,23 @@ async function unmute(member, punisher, reason, role) {
 }
 
 async function kick(member, punisher, reason) {
+    punisher = punisher ?? member.client.user;
     await SQLManager.Kicks.create({ Member: member.id, Time: Date.now(), Reason: reason, Punisher: punisher.id });
     await member.kick(reason);
     await addPunishment(member, punisher, 'kick', reason);
     return true;
 }
 
+async function warn(member, punisher, reason) {
+    punisher = punisher ?? member.client.user;
+    await SQLManager.Warnings.create({ Member: member.id, Time: Date.now(), Reason: reason, Punisher: punisher.id });
+    await addPunishment(member, punisher, 'warn', reason);
+    return true;
+}
+
 async function embedBuilder(user, reason, length, punisher, type) {
     const lengthMessage = length == 0 ? 'Permanent' : length + ' minutes';
+    punisher = punisher ?? user.client.user;
 
     const embed = new EmbedBuilder();
     embed.setThumbnail(user.avatarURL());
@@ -84,6 +98,11 @@ async function embedBuilder(user, reason, length, punisher, type) {
             break;
         case 'kick':
             embed.setTitle('[UNMUTE] ' + user.username);
+            // Yellow
+            embed.setColor('#ffff00');
+            break;
+        case 'warn':
+            embed.setTitle('[WARN] ' + user.username);
             // Yellow
             embed.setColor('#ffff00');
             break;
