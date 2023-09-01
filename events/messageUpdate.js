@@ -9,6 +9,8 @@ module.exports = {
 	name: Events.MessageUpdate,
 	async execute(oldMessage, newMessage) {
 
+        if (newMessage.author.bot) { return; }
+
         const toLower = w => w.toLocaleLowerCase();
         const messageLower = toLower(newMessage.content);
 

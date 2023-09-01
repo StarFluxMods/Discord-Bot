@@ -1,11 +1,8 @@
 - Commands
-    - Depends Command (Displays how to check mod dependencies)
-    - GameFolder Command (Displays how to get to game folder)
     - BepInEx
     - MelonLoader
 
 - Automations
-    - Welcome Message
     - KitchenDesigner Support
 
 - Ports
