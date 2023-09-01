@@ -4,7 +4,8 @@ const PermissionManager = require('../../modules/permissions_manager.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('setup')
-		.setDescription('Sets up the bot for use'),
+		.setDescription('Sets up the bot for use')
+        .addRoleOption(option => option.setName('role').setDescription('Master Role').setRequired(true)),
 	async execute(interaction) {
         const role = await PermissionManager.getRole('*');
         if (role.length > 0) {
@@ -12,8 +13,11 @@ module.exports = {
             return;
         }
         else {
+
+            const _role = interaction.options.getRole('role');
+
             interaction.reply({ content: 'Setting up the bot...', ephemeral: true });
-            await PermissionManager.setupMasterPermission('1146088294547992717');
+            await PermissionManager.setupMasterPermission(_role.id);
             return;
         }
 	},

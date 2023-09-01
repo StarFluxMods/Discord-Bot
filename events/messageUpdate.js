@@ -24,8 +24,6 @@ module.exports = {
                 console.log(whitelist);
                 whitelist = whitelist.map(toLower);
                 if (!whitelist.some(w => messageLower.includes(w))) {
-                    const deleteembed = await LogUtils.CreateDeleteLog(newMessage, newMessage.author);
-                    await LogUtils.SendEmbed(newMessage.client, 'chat-logs', deleteembed);
                     await PunishmentManager.warn(newMessage.author, null, 'That link is not allowed in this server');
 
                     try {
@@ -50,9 +48,6 @@ module.exports = {
                 const phrase = blacklist.find(w => messageLower.includes(w));
                 const _embed = await LogUtils.CreateModDeleteLog(newMessage, phrase, newMessage.author);
                 await LogUtils.SendEmbed(newMessage.client, 'mod-logs', _embed);
-
-                const deleteembed = await LogUtils.CreateDeleteLog(newMessage, newMessage.author);
-                await LogUtils.SendEmbed(newMessage.client, 'chat-logs', deleteembed);
 
                 await PunishmentManager.warn(newMessage.author, null, 'That phrase is not allowed in this server');
 

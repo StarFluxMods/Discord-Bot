@@ -1,4 +1,4 @@
-const { Events } = require('discord.js');
+const { Events, EmbedBuilder } = require('discord.js');
 const CommandUtils = require('../modules/command_utils.js');
 const PermissionManager = require('../modules/permissions_manager.js');
 const PunishmentManager = require('../modules/punishment_manager.js');
@@ -49,8 +49,7 @@ module.exports = {
                 const embed = await LogUtils.CreateModDeleteLog(message, phrase, message.author);
                 await LogUtils.SendEmbed(message.client, 'mod-logs', embed);
 
-                const deleteembed = await LogUtils.CreateDeleteLog(message, message.author);
-                await LogUtils.SendEmbed(message.client, 'chat-logs', deleteembed);
+
                 await PunishmentManager.warn(message.author, null, 'That phrase is not allowed in this server');
 
                 try {
@@ -60,6 +59,34 @@ module.exports = {
                     console.log(error);
                 }
 
+                message.delete();
+                return;
+            }
+        }
+
+        // Check if the message is a KitchenDesigner link
+        if (message.content.toLowerCase().includes('plateuptools.com/kitchen-designer')) {
+            if (!(message.channel.id === await CommandUtils.GetPreference('kitchendesigner-channel'))) {
+                message.delete();
+                return;
+            }
+            else {
+                const designid = message.content.split('?d=')[1].split('==')[0];
+                const imageURL = 'https://plateuptools.com/.netlify/functions/og/' + designid;
+                const viewURL = 'https://plateuptools.com/kitchen-designer/view?d=' + designid;
+
+                const embed = new EmbedBuilder()
+                .setTitle('KitchenDesigner Link')
+                .setURL(viewURL)
+                .setImage(imageURL)
+                .setColor('#00b0f4')
+                .setFooter({
+                    text: message.author.username,
+                    iconURL: await message.author.avatarURL(),
+                })
+                .setTimestamp();
+
+                message.channel.send({ embeds: [embed] });
                 message.delete();
                 return;
             }
