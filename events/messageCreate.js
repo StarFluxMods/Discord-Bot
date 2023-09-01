@@ -2,6 +2,7 @@ const { Events } = require('discord.js');
 const CommandUtils = require('../modules/command_utils.js');
 const PermissionManager = require('../modules/permissions_manager.js');
 const PunishmentManager = require('../modules/punishment_manager.js');
+const LogUtils = require('../modules/log_utils.js');
 
 module.exports = {
 	name: Events.MessageCreate,
@@ -21,10 +22,8 @@ module.exports = {
         if (new RegExp('([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?').test(messageLower)) {
             if (!await PermissionManager.hasPermission(message.member, 'permission.links.bypass')) {
                 let whitelist = await CommandUtils.GetLinkWhiteList();
-                console.log(whitelist);
                 whitelist = whitelist.map(toLower);
                 if (!whitelist.some(w => messageLower.includes(w))) {
-                    message.delete();
                     await PunishmentManager.warn(message.author, null, 'That link is not allowed in this server');
 
                     try {
@@ -33,6 +32,8 @@ module.exports = {
                     catch (error) {
                         console.log(error);
                     }
+
+                    message.delete();
                     return;
                 }
             }
@@ -43,7 +44,13 @@ module.exports = {
             let blacklist = await CommandUtils.GetPhraseBlackList();
             blacklist = blacklist.map(toLower);
             if (blacklist.some(w => messageLower.includes(w))) {
-                message.delete();
+
+                const phrase = await blacklist.find(w => messageLower.includes(w));
+                const embed = await LogUtils.CreateModDeleteLog(message, phrase, message.author);
+                await LogUtils.SendEmbed(message.client, 'mod-logs', embed);
+
+                const deleteembed = await LogUtils.CreateDeleteLog(message, message.author);
+                await LogUtils.SendEmbed(message.client, 'chat-logs', deleteembed);
                 await PunishmentManager.warn(message.author, null, 'That phrase is not allowed in this server');
 
                 try {
@@ -53,7 +60,7 @@ module.exports = {
                     console.log(error);
                 }
 
-                // const phrase = blacklist.find(w => messageLower.includes(w));
+                message.delete();
                 return;
             }
         }

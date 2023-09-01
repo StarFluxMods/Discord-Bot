@@ -83,35 +83,35 @@ async function embedBuilder(user, reason, length, punisher, type) {
     punisher = punisher ?? user.client.user;
 
     const embed = new EmbedBuilder();
-    embed.setThumbnail(user.user.avatarURL());
+    embed.setThumbnail(user.avatarURL());
     switch (type) {
         case 'ban':
-            embed.setTitle('[BAN] ' + user.user.username);
+            embed.setTitle('[BAN] ' + user.username);
             // Red
             embed.setColor('#ff0000');
             break;
         case 'unban':
-            embed.setTitle('[UNBAN] ' + user.user.username);
+            embed.setTitle('[UNBAN] ' + user.username);
             // Green
             embed.setColor('#00ff00');
             break;
         case 'mute':
-            embed.setTitle('[MUTE] ' + user.user.username);
+            embed.setTitle('[MUTE] ' + user.username);
             // Yellow
             embed.setColor('#ffff00');
             break;
         case 'unmute':
-            embed.setTitle('[UNMUTE] ' + user.user.username);
+            embed.setTitle('[UNMUTE] ' + user.username);
             // Green
             embed.setColor('#00ff00');
             break;
         case 'kick':
-            embed.setTitle('[KICK] ' + user.user.username);
+            embed.setTitle('[KICK] ' + user.username);
             // Yellow
             embed.setColor('#ffff00');
             break;
         case 'warn':
-            embed.setTitle('[WARN] ' + user.user.username);
+            embed.setTitle('[WARN] ' + user.username);
             // Yellow
             embed.setColor('#ffff00');
             break;
