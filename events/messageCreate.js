@@ -27,7 +27,12 @@ module.exports = {
                     message.delete();
                     await PunishmentManager.warn(message.author, null, 'That link is not allowed in this server');
 
-                    await message.author.client.users.send(message.author.id, { embeds: [await PunishmentManager.embedBuilder(message.author, 'That link is not allowed in this server', -1, null, 'warn')] });
+                    try {
+                        await message.author.client.users.send(message.author.id, { embeds: [await PunishmentManager.embedBuilder(message.author, 'That link is not allowed in this server', -1, null, 'warn')] });
+                    }
+                    catch (error) {
+                        console.log(error);
+                    }
                     return;
                 }
             }
@@ -41,7 +46,12 @@ module.exports = {
                 message.delete();
                 await PunishmentManager.warn(message.author, null, 'That phrase is not allowed in this server');
 
-                await message.author.client.users.send(message.author.id, { embeds: [await PunishmentManager.embedBuilder(message.author, 'That phrase is not allowed in this server', -1, null, 'warn')] });
+                try {
+                    await message.author.client.users.send(message.author.id, { embeds: [await PunishmentManager.embedBuilder(message.author, 'That phrase is not allowed in this server', -1, null, 'warn')] });
+                }
+                catch (error) {
+                    console.log(error);
+                }
 
                 // const phrase = blacklist.find(w => messageLower.includes(w));
                 return;

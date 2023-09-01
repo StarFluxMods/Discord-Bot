@@ -11,11 +11,8 @@ module.exports = {
 	async execute(interaction) {
         if (!await CommandUtils.EnsurePermissions(interaction, 'commands.unban')) { return; }
 
-        let target = await CommandUtils.GetMember(interaction.guild, interaction.options.getString('member'));
+        const target = await CommandUtils.GetMember(interaction.guild, interaction.options.getString('member'));
         const reason = interaction.options.getString('reason') ?? 'No reason provided';
-        if (target) {
-            target = target.user;
-        }
 
         const result = await PunishmentManager.unban(interaction.guild, target, interaction.member, reason);
 

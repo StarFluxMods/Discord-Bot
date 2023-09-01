@@ -53,13 +53,24 @@ module.exports = {
             }
         }
 
-        await interaction.client.users.send(target.id, { embeds: [await PunishmentManager.embedBuilder(target.user, reason, length, interaction.member, 'mute')] });
-        await interaction.reply({ embeds: [await PunishmentManager.embedBuilder(target.user, reason, length, interaction.member, 'mute')], ephemeral: true });
+        try {
+            await interaction.client.users.send(target.id, { embeds: [await PunishmentManager.embedBuilder(target, reason, length, interaction.member, 'mute')] });
+        }
+        catch (error) {
+            console.log(error);
+        }
+        await interaction.reply({ embeds: [await PunishmentManager.embedBuilder(target, reason, length, interaction.member, 'mute')], ephemeral: true });
 
         const result = await PunishmentManager.mute(target, reason, length, interaction.member, muteRole);
 
-        if (!result) {
+        if (result == 0) {
             await interaction.reply({ content: 'This member is already muted', ephemeral: true });
+            return;
+        }
+
+        if (result == 2) {
+            await interaction.reply({ content: 'Mute role has not been assigned.', ephemeral: true });
+            return;
         }
 
 	},

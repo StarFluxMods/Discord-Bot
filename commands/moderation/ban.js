@@ -46,8 +46,14 @@ module.exports = {
             }
         }
 
-        await interaction.client.users.send(target.id, { embeds: [await PunishmentManager.embedBuilder(target.user, reason, length, interaction.member, 'ban')] });
-        await interaction.reply({ embeds: [await PunishmentManager.embedBuilder(target.user, reason, length, interaction.member, 'ban')], ephemeral: true });
+        try {
+            await interaction.client.users.send(target.id, { embeds: [await PunishmentManager.embedBuilder(target, reason, length, interaction.member, 'ban')] });
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        await interaction.reply({ embeds: [await PunishmentManager.embedBuilder(target, reason, length, interaction.member, 'ban')], ephemeral: true });
 
         const result = await PunishmentManager.ban(target, reason, length, interaction.member);
 

@@ -29,6 +29,6 @@ module.exports = {
             return;
         }
 
-        await interaction.reply({ embeds: [await PunishmentManager.embedBuilder(target.user, reason, -1, interaction.member, 'unmute')], ephemeral: true });
+        await interaction.reply({ embeds: [await PunishmentManager.embedBuilder(target, reason, -1, interaction.member, 'unmute')], ephemeral: true });
 	},
 };

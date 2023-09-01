@@ -20,8 +20,13 @@ module.exports = {
             return;
         }
 
-        await interaction.client.users.send(target.id, { embeds: [await PunishmentManager.embedBuilder(target.user, reason, -1, interaction.member, 'kick')] });
-        await interaction.reply({ embeds: [await PunishmentManager.embedBuilder(target.user, reason, -1, interaction.member, 'kick')], ephemeral: true });
+        try {
+            await interaction.client.users.send(target.id, { embeds: [await PunishmentManager.embedBuilder(target, reason, -1, interaction.member, 'kick')] });
+        }
+        catch (error) {
+            console.log(error);
+        }
+        await interaction.reply({ embeds: [await PunishmentManager.embedBuilder(target, reason, -1, interaction.member, 'kick')], ephemeral: true });
 
         await PunishmentManager.kick(target, interaction.member, reason);
 
