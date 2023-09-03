@@ -2,3 +2,12 @@
     - Mee6 Levels
         - Allow Bot Muting
     - Streamcord
+
+- Commands
+    - Change /Mute to use /Timeout functionality
+    - Allow User commands to have "Plaintext" options
+    - Add /rolepermissions
+
+- Automation
+    - Adjust JOIN and LEAVE messages to contain @ tags
+    - Anti Pings (Warn when pinging certain users ie. ajvr, turtleup)
