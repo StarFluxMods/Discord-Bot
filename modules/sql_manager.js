@@ -56,6 +56,13 @@ module.exports = {
         },
     }),
     PunishmentHistory: sequelize.define('punishment-history', {
+        InfractionID: {
+            type: Sequelize.STRING,
+        },
+        Hidden: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+        },
         Member: {
             type: Sequelize.STRING,
         },
@@ -73,6 +80,13 @@ module.exports = {
         },
     }),
     Bans: sequelize.define('punishment-bans', {
+        InfractionID: {
+            type: Sequelize.STRING,
+        },
+        Hidden: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+        },
         Member: {
             type: Sequelize.STRING,
         },
@@ -102,6 +116,13 @@ module.exports = {
         },
     }),
     Mutes: sequelize.define('punishment-mutes', {
+        InfractionID: {
+            type: Sequelize.STRING,
+        },
+        Hidden: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+        },
         Member: {
             type: Sequelize.STRING,
         },
@@ -131,6 +152,13 @@ module.exports = {
         },
     }),
     Kicks: sequelize.define('punishment-kicks', {
+        InfractionID: {
+            type: Sequelize.STRING,
+        },
+        Hidden: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+        },
         Member: {
             type: Sequelize.STRING,
         },
@@ -145,6 +173,13 @@ module.exports = {
         },
     }),
     Warnings: sequelize.define('punishment-warnings', {
+        InfractionID: {
+            type: Sequelize.STRING,
+        },
+        Hidden: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+        },
         Member: {
             type: Sequelize.STRING,
         },
@@ -155,6 +190,20 @@ module.exports = {
             type: Sequelize.STRING,
         },
         Punisher: {
+            type: Sequelize.STRING,
+        },
+    }),
+    InfractionRemoval: sequelize.define('punishment-removal', {
+        InfractionID: {
+            type: Sequelize.STRING,
+        },
+        Punisher: {
+            type: Sequelize.STRING,
+        },
+        Time: {
+            type: Sequelize.NUMBER,
+        },
+        Reason: {
             type: Sequelize.STRING,
         },
     }),

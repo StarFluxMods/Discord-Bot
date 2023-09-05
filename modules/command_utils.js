@@ -19,6 +19,7 @@ module.exports = {
     RemovePhraseBlackList,
     GetPhraseBlackList,
     ConvertMee6LevelsToLlamaLevels,
+    GenerateRandomString,
 };
 
 async function EnsurePermissions(interaction, permission) {
@@ -30,7 +31,7 @@ async function EnsurePermissions(interaction, permission) {
             });
         } else {
             interaction.reply({
-                content: "You don't have permission to run this command.",
+                content: 'You don\'t have permission to run this command',
                 ephemeral: true,
             });
         }
@@ -211,4 +212,14 @@ async function ConvertMee6LevelsToLlamaLevels(member) {
         console.log(`Failed to convert ${member.user.username}`);
     }
     return;
+}
+
+async function GenerateRandomString(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; ++i) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }

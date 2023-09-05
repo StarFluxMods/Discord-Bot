@@ -6,7 +6,8 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('history')
         .setDescription('Displays a members history')
-        .addUserOption((option) => option.setName('member').setDescription('The member to get history of').setRequired(true)),
+        .addUserOption((option) => option.setName('member').setDescription('The member to get history of').setRequired(true))
+        .addBooleanOption((option) => option.setName('showids').setDescription('Show infraction IDs')),
     async execute(interaction) {
         if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.history'))) {
             return;
@@ -33,7 +34,7 @@ module.exports = {
 
         for (const punishment of history) {
             embed.fields.push({
-                name: `${punishment.Type} - ${punishment.Reason}`,
+                name: `${punishment.Type} - ${punishment.Reason} ${interaction.options.getBoolean('showids') ? `(${punishment.InfractionID})` : ''}`,
                 value: `Punished by <@${punishment.Punisher}> <t:${punishment.Date}:R>`,
             });
         }

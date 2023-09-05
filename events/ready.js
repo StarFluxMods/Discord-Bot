@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 const PunishmentManager = require('../modules/punishment_manager.js');
 const CommandUtils = require('../modules/command_utils.js');
 
-const version = '0.1.2';
+const version = '0.1.3';
 
 module.exports = {
     name: Events.ClientReady,
@@ -21,6 +21,7 @@ module.exports = {
         SQLManager.Mutes.sync();
         SQLManager.Kicks.sync();
         SQLManager.Warnings.sync();
+        SQLManager.InfractionRemoval.sync();
         SQLManager.BotChannels.sync();
         SQLManager.LinkWhitelist.sync();
         SQLManager.PhraseBlacklist.sync();
