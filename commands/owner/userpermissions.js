@@ -3,19 +3,21 @@ const PermissionManager = require('../../modules/permissions_manager.js');
 const CommandUtils = require('../../modules/command_utils.js');
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('userpermissions')
-		.setDescription('Displays a users individual permissions')
-        .addUserOption(option => option.setName('user').setDescription('The user to get permissions of').setRequired(true))
-        .addBooleanOption(option => option.setName('includeroles').setDescription('Include Role Permissions')),
-	async execute(interaction) {
-        if (!await CommandUtils.EnsurePermissions(interaction, 'commands.userpermissions')) { return; }
+    data: new SlashCommandBuilder()
+        .setName('userpermissions')
+        .setDescription('Displays a users individual permissions')
+        .addUserOption((option) => option.setName('user').setDescription('The user to get permissions of').setRequired(true))
+        .addBooleanOption((option) => option.setName('includeroles').setDescription('Include Role Permissions')),
+    async execute(interaction) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.userpermissions'))) {
+            return;
+        }
 
         const member = interaction.options.getMember('user');
         const includeRoles = interaction.options.getBoolean('includeroles');
 
         const permissions = await PermissionManager.getUserPermissions(member);
-        const roles = member.roles.cache.map(role => role.id);
+        const roles = member.roles.cache.map((role) => role.id);
         const rolePermissions = [];
         for (const role of roles) {
             const rolePerms = await PermissionManager.getPermissions(role);
@@ -45,6 +47,9 @@ module.exports = {
             });
         }
 
-        await interaction.reply({ embeds: [embed], ephemeral: true });
-	},
+        await interaction.reply({
+            embeds: [embed],
+            ephemeral: true,
+        });
+    },
 };

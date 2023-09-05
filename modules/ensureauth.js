@@ -9,7 +9,7 @@ if (fs.existsSync('./.debug')) {
 }
 
 if (!fs.existsSync(configDirectory)) {
-	fs.mkdirSync(configDirectory);
+    fs.mkdirSync(configDirectory);
 }
 
 if (!fs.existsSync(authDirectory)) {
@@ -20,8 +20,8 @@ const data = fs.readFileSync(authDirectory);
 const json = JSON.parse(data);
 
 if (json['token'] === '' || json['clientId'] === '' || json['guildId'] === '') {
-	console.log('Please set your bot token, client ID, and guild ID in /data/config/auth.json');
-	process.exit(1);
+    console.log('Please set your bot token, client ID, and guild ID in /data/config/auth.json');
+    process.exit(1);
 }
 
 module.exports = {

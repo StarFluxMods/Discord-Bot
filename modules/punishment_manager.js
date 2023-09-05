@@ -1,26 +1,52 @@
 const SQLManager = require('./sql_manager.js');
 const { EmbedBuilder } = require('discord.js');
 
-module.exports = { getHistory, embedBuilder, ban, unban, mute, unmute, kick, warn };
+module.exports = {
+    getHistory,
+    embedBuilder,
+    ban,
+    unban,
+    mute,
+    unmute,
+    kick,
+    warn,
+};
 
 async function addPunishment(member, punisher, type, reason) {
     punisher = punisher ?? member.client.user;
-    await SQLManager.PunishmentHistory.create({ Member: member.id, Punisher: punisher.id, Type: type, Reason: reason, Date: Math.floor(Date.now() / 1000) });
+    await SQLManager.PunishmentHistory.create({
+        Member: member.id,
+        Punisher: punisher.id,
+        Type: type,
+        Reason: reason,
+        Date: Math.floor(Date.now() / 1000),
+    });
 }
 
 async function getHistory(member) {
     // get all punishments sorted by date
-    const punishments = await SQLManager.PunishmentHistory.findAll({ where: { Member: member.id }, order: [['Date', 'DESC']] });
+    const punishments = await SQLManager.PunishmentHistory.findAll({
+        where: { Member: member.id },
+        order: [['Date', 'DESC']],
+    });
     return punishments;
 }
 
 async function ban(member, reason, length, punisher) {
     punisher = punisher ?? member.client.user;
-    const existingBan = await SQLManager.Bans.findOne({ where: { Member: member.id, Active: true } });
+    const existingBan = await SQLManager.Bans.findOne({
+        where: { Member: member.id, Active: true },
+    });
     if (existingBan) {
         return false;
     }
-    await SQLManager.Bans.create({ Member: member.id, Time: Math.floor(Date.now() / 1000), Reason: reason, Length: length * 60, Punisher: punisher.id });
+    await SQLManager.Bans.create({
+        Member: member.id,
+        Time: Math.floor(Date.now() / 1000),
+        Reason: reason,
+        Length: length * 60,
+        Punisher: punisher.id,
+    });
     await addPunishment(member, punisher, 'ban', reason);
     await member.ban({ reason: reason });
     return true;
@@ -28,44 +54,72 @@ async function ban(member, reason, length, punisher) {
 
 async function unban(guild, member, punisher, reason) {
     punisher = punisher ?? member.client.user;
-    const existingBan = await SQLManager.Bans.findOne({ where: { Member: member.user.id, Active: true } });
+    const existingBan = await SQLManager.Bans.findOne({
+        where: { Member: member.user.id, Active: true },
+    });
     if (!existingBan) {
         return false;
     }
-    await existingBan.update({ Active: false, Remover: punisher.id, RemovalReason: reason });
+    await existingBan.update({
+        Active: false,
+        Remover: punisher.id,
+        RemovalReason: reason,
+    });
     await guild.members.unban(member.user.id, reason);
     return true;
 }
 
-async function mute(member, reason, length, punisher, role) {
-    if (!role) {
-        return 2;
+async function mute(member, reason, length, punisher) {
+    if (length == 0) {
+        length = 27 * 24 * 60 * 60 * 1000 + 1;
+    } else {
+        length = length * 60 * 1000;
     }
+
     punisher = punisher ?? member.client.user;
-    const existingMute = await SQLManager.Mutes.findOne({ where: { Member: member.id, Active: true } });
+    const existingMute = await SQLManager.Mutes.findOne({
+        where: { Member: member.id, Active: true },
+    });
     if (existingMute) {
         return 0;
     }
-    await SQLManager.Mutes.create({ Member: member.id, Time: Math.floor(Date.now() / 1000), Reason: reason, Length: length * 60, Punisher: punisher.id });
+    await SQLManager.Mutes.create({
+        Member: member.id,
+        Time: Math.floor(Date.now() / 1000),
+        Reason: reason,
+        Length: length * 60,
+        Punisher: punisher.id,
+    });
     await addPunishment(member, punisher, 'mute', reason);
-    await member.roles.add(role, reason);
+    await member.timeout(length, reason);
     return 1;
 }
 
-async function unmute(member, punisher, reason, role) {
+async function unmute(member, punisher, reason) {
     punisher = punisher ?? member.client.user;
-    const existingMute = await SQLManager.Mutes.findOne({ where: { Member: member.id, Active: true } });
+    const existingMute = await SQLManager.Mutes.findOne({
+        where: { Member: member.id, Active: true },
+    });
     if (!existingMute) {
         return false;
     }
-    await existingMute.update({ Active: false, Remover: punisher.id, RemovalReason: reason });
-    await member.roles.remove(role, reason);
+    await existingMute.update({
+        Active: false,
+        Remover: punisher.id,
+        RemovalReason: reason,
+    });
+    await member.timeout(null, reason);
     return true;
 }
 
 async function kick(member, punisher, reason) {
     punisher = punisher ?? member.client.user;
-    await SQLManager.Kicks.create({ Member: member.id, Time: Math.floor(Date.now() / 1000), Reason: reason, Punisher: punisher.id });
+    await SQLManager.Kicks.create({
+        Member: member.id,
+        Time: Math.floor(Date.now() / 1000),
+        Reason: reason,
+        Punisher: punisher.id,
+    });
     await member.kick(reason);
     await addPunishment(member, punisher, 'kick', reason);
     return true;
@@ -73,7 +127,12 @@ async function kick(member, punisher, reason) {
 
 async function warn(member, punisher, reason) {
     punisher = punisher ?? member.client.user;
-    await SQLManager.Warnings.create({ Member: member.id, Time: Math.floor(Date.now() / 1000), Reason: reason, Punisher: punisher.id });
+    await SQLManager.Warnings.create({
+        Member: member.id,
+        Time: Math.floor(Date.now() / 1000),
+        Reason: reason,
+        Punisher: punisher.id,
+    });
     await addPunishment(member, punisher, 'warn', reason);
     return true;
 }
@@ -81,6 +140,9 @@ async function warn(member, punisher, reason) {
 async function embedBuilder(user, reason, length, punisher, type) {
     const lengthMessage = length == 0 ? 'Permanent' : length + ' minutes';
     punisher = punisher ?? user.client.user;
+    if (user.username == undefined) {
+        user = user.user;
+    }
 
     const embed = new EmbedBuilder();
     embed.setThumbnail(user.avatarURL());
@@ -119,8 +181,7 @@ async function embedBuilder(user, reason, length, punisher, type) {
 
     if (length == -1) {
         embed.setDescription('Target : <@' + user.id + '>\nReason : ' + reason + '\nPunisher : <@' + punisher.id + '>');
-    }
-    else {
+    } else {
         embed.setDescription('Target : <@' + user.id + '>\nReason : ' + reason + '\nLength : ' + lengthMessage + '\nPunisher : <@' + punisher.id + '>');
     }
     embed.setFooter({
@@ -130,5 +191,4 @@ async function embedBuilder(user, reason, length, punisher, type) {
     embed.setTimestamp();
 
     return embed;
-
 }

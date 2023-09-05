@@ -2,11 +2,11 @@ const { SlashCommandBuilder } = require('discord.js');
 const CommandUtils = require('../../modules/command_utils.js');
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('phraseblacklist')
-		.setDescription('Displays all phrases in the blacklist'),
-	async execute(interaction) {
-        if (!await CommandUtils.EnsurePermissions(interaction, 'commands.phraseblacklist')) { return; }
+    data: new SlashCommandBuilder().setName('phraseblacklist').setDescription('Displays all phrases in the blacklist'),
+    async execute(interaction) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.phraseblacklist'))) {
+            return;
+        }
 
         const blacklist = await CommandUtils.GetPhraseBlackList();
         const embed = {
@@ -15,6 +15,9 @@ module.exports = {
             color: 0x0000ff,
         };
 
-        await interaction.reply({ embeds: [embed], ephemeral: true });
-	},
+        await interaction.reply({
+            embeds: [embed],
+            ephemeral: true,
+        });
+    },
 };

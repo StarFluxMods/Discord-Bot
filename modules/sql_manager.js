@@ -8,11 +8,11 @@ if (fs.existsSync('./.debug')) {
 }
 
 const sequelize = new Sequelize('database', 'user', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite',
-	logging: false,
-	// SQLite only
-	storage: storage,
+    host: 'localhost',
+    dialect: 'sqlite',
+    logging: false,
+    // SQLite only
+    storage: storage,
 });
 
 module.exports = {
@@ -98,7 +98,7 @@ module.exports = {
         },
         Active: {
             type: Sequelize.BOOLEAN,
-			defaultValue: true,
+            defaultValue: true,
         },
     }),
     Mutes: sequelize.define('punishment-mutes', {
@@ -127,7 +127,7 @@ module.exports = {
         },
         Active: {
             type: Sequelize.BOOLEAN,
-			defaultValue: true,
+            defaultValue: true,
         },
     }),
     Kicks: sequelize.define('punishment-kicks', {
@@ -158,5 +158,21 @@ module.exports = {
             type: Sequelize.STRING,
         },
     }),
-
+    Levels: sequelize.define('user-levels', {
+        Member: {
+            type: Sequelize.STRING,
+        },
+        MuteAnnouncements: {
+            type: Sequelize.BOOLEAN,
+        },
+        EXP: {
+            type: Sequelize.NUMBER,
+        },
+        Level: {
+            type: Sequelize.NUMBER,
+        },
+        TimeOfLastAward: {
+            type: Sequelize.NUMBER,
+        },
+    }),
 };

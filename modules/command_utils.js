@@ -1,15 +1,38 @@
 const PermissionManager = require('./permissions_manager.js');
 const SQLManager = require('./sql_manager.js');
+const Mee6LevelsApi = require('mee6-levels-api');
+const LevelsManager = require('./levels_manager.js');
 
-module.exports = { EnsurePermissions, GetMember, SetPreference, GetPreference, GetBotChannels, AddBotChannel, RemoveBotChannel, IsBotChannel, AddLinkWhiteList, RemoveLinkWhiteList, GetLinkWhiteList, AddPhraseBlackList, RemovePhraseBlackList, GetPhraseBlackList };
+module.exports = {
+    EnsurePermissions,
+    GetMember,
+    SetPreference,
+    GetPreference,
+    GetBotChannels,
+    AddBotChannel,
+    RemoveBotChannel,
+    IsBotChannel,
+    AddLinkWhiteList,
+    RemoveLinkWhiteList,
+    GetLinkWhiteList,
+    AddPhraseBlackList,
+    RemovePhraseBlackList,
+    GetPhraseBlackList,
+    ConvertMee6LevelsToLlamaLevels,
+};
 
 async function EnsurePermissions(interaction, permission) {
-    if (!await PermissionManager.hasPermission(interaction.member, permission)) {
+    if (!(await PermissionManager.hasPermission(interaction.member, permission))) {
         if (await PermissionManager.hasPermission(interaction.member, 'permission.view-missing')) {
-            interaction.reply({ content: `You are require \`${permission}\` to run this command.`, ephemeral: true });
-        }
-        else {
-            interaction.reply({ content: 'You don\'t have permission to run this command.', ephemeral: true });
+            interaction.reply({
+                content: `You are require \`${permission}\` to run this command.`,
+                ephemeral: true,
+            });
+        } else {
+            interaction.reply({
+                content: "You don't have permission to run this command.",
+                ephemeral: true,
+            });
         }
         return false;
     }
@@ -18,41 +41,52 @@ async function EnsurePermissions(interaction, permission) {
 
 async function GetMember(guild, id) {
     let result = null;
-    await guild.members.fetch(id).then(member => {
-        result = member;
-    }).catch(() => {
-        result = null;
-    });
-
-    if (result == null) {
-        await guild.bans.fetch(id).then(ban => {
-            result = ban;
-        }).catch(() => {
+    await guild.members
+        .fetch(id)
+        .then((member) => {
+            result = member;
+        })
+        .catch(() => {
             result = null;
         });
+
+    if (result == null) {
+        await guild.bans
+            .fetch(id)
+            .then((ban) => {
+                result = ban;
+            })
+            .catch(() => {
+                result = null;
+            });
     }
 
     return result;
 }
 
 async function SetPreference(key, value) {
-    const preference = await SQLManager.Preferences.findOne({ where: { Key: key } });
+    const preference = await SQLManager.Preferences.findOne({
+        where: { Key: key },
+    });
     if (preference) {
         await preference.update({ Value: value });
         return false;
-    }
-    else {
-        await SQLManager.Preferences.create({ Key: key, Value: value });
+    } else {
+        await SQLManager.Preferences.create({
+            Key: key,
+            Value: value,
+        });
         return true;
     }
 }
 
 async function GetPreference(key) {
-    const preference = await SQLManager.Preferences.findOne({ where: { Key: key } });
+    const preference = await SQLManager.Preferences.findOne({
+        where: { Key: key },
+    });
     if (preference) {
         return preference.Value;
-    }
-    else {
+    } else {
         return null;
     }
 }
@@ -60,63 +94,67 @@ async function GetPreference(key) {
 async function GetBotChannels() {
     const botChannels = await SQLManager.BotChannels.findAll();
     if (botChannels) {
-        return botChannels.map(channel => channel.ChannelID);
-    }
-    else {
+        return botChannels.map((channel) => channel.ChannelID);
+    } else {
         return null;
     }
 }
 
 async function AddBotChannel(channel) {
-    const botChannel = await SQLManager.BotChannels.findOne({ where: { ChannelID: channel } });
+    const botChannel = await SQLManager.BotChannels.findOne({
+        where: { ChannelID: channel },
+    });
     if (botChannel) {
         return false;
-    }
-    else {
+    } else {
         await SQLManager.BotChannels.create({ ChannelID: channel });
         return true;
     }
 }
 
 async function RemoveBotChannel(channel) {
-    const botChannel = await SQLManager.BotChannels.findOne({ where: { ChannelID: channel } });
+    const botChannel = await SQLManager.BotChannels.findOne({
+        where: { ChannelID: channel },
+    });
     if (botChannel) {
         await botChannel.destroy();
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }
 
 async function IsBotChannel(channel) {
-    const botChannel = await SQLManager.BotChannels.findOne({ where: { ChannelID: channel } });
+    const botChannel = await SQLManager.BotChannels.findOne({
+        where: { ChannelID: channel },
+    });
     if (botChannel) {
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }
 
 async function AddLinkWhiteList(link) {
-    const whitelist = await SQLManager.LinkWhitelist.findOne({ where: { Link: link } });
+    const whitelist = await SQLManager.LinkWhitelist.findOne({
+        where: { Link: link },
+    });
     if (whitelist) {
         return false;
-    }
-    else {
+    } else {
         await SQLManager.LinkWhitelist.create({ Link: link });
         return true;
     }
 }
 
 async function RemoveLinkWhiteList(link) {
-    const whitelist = await SQLManager.LinkWhitelist.findOne({ where: { Link: link } });
+    const whitelist = await SQLManager.LinkWhitelist.findOne({
+        where: { Link: link },
+    });
     if (whitelist) {
         await whitelist.destroy();
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }
@@ -124,31 +162,32 @@ async function RemoveLinkWhiteList(link) {
 async function GetLinkWhiteList() {
     const whitelist = await SQLManager.LinkWhitelist.findAll();
     if (whitelist) {
-        return whitelist.map(w => w.Link);
-    }
-    else {
+        return whitelist.map((w) => w.Link);
+    } else {
         return null;
     }
 }
 
 async function AddPhraseBlackList(phrase) {
-    const blacklist = await SQLManager.PhraseBlacklist.findOne({ where: { Phrase: phrase } });
+    const blacklist = await SQLManager.PhraseBlacklist.findOne({
+        where: { Phrase: phrase },
+    });
     if (blacklist) {
         return false;
-    }
-    else {
+    } else {
         await SQLManager.PhraseBlacklist.create({ Phrase: phrase });
         return true;
     }
 }
 
 async function RemovePhraseBlackList(phrase) {
-    const blacklist = await SQLManager.PhraseBlacklist.findOne({ where: { Phrase: phrase } });
+    const blacklist = await SQLManager.PhraseBlacklist.findOne({
+        where: { Phrase: phrase },
+    });
     if (blacklist) {
         await blacklist.destroy();
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }
@@ -156,9 +195,20 @@ async function RemovePhraseBlackList(phrase) {
 async function GetPhraseBlackList() {
     const blacklist = await SQLManager.PhraseBlacklist.findAll();
     if (blacklist) {
-        return blacklist.map(w => w.Phrase);
-    }
-    else {
+        return blacklist.map((w) => w.Phrase);
+    } else {
         return null;
     }
+}
+
+async function ConvertMee6LevelsToLlamaLevels(member) {
+    const mee6Level = await Mee6LevelsApi.getUserXp(await GetPreference('guildid'), member.id);
+    if (mee6Level) {
+        console.log(`Converting ${member.user.username} to ${mee6Level.xp.totalXp}`);
+        await LevelsManager.SetUserXP(member, mee6Level.xp.totalXp);
+        await LevelsManager.CheckUserLevelChange(member);
+    } else {
+        console.log(`Failed to convert ${member.user.username}`);
+    }
+    return;
 }

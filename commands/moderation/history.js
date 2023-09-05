@@ -3,19 +3,24 @@ const PunishmentManager = require('../../modules/punishment_manager.js');
 const CommandUtils = require('../../modules/command_utils.js');
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('history')
-		.setDescription('Displays a members history')
-        .addUserOption(option => option.setName('member').setDescription('The member to get history of').setRequired(true)),
-	async execute(interaction) {
-        if (!await CommandUtils.EnsurePermissions(interaction, 'commands.history')) { return; }
+    data: new SlashCommandBuilder()
+        .setName('history')
+        .setDescription('Displays a members history')
+        .addUserOption((option) => option.setName('member').setDescription('The member to get history of').setRequired(true)),
+    async execute(interaction) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.history'))) {
+            return;
+        }
 
         const target = interaction.options.getMember('member');
 
         const history = await PunishmentManager.getHistory(target);
 
         if (history.length == 0) {
-            await interaction.reply({ content: 'This member has no history', ephemeral: true });
+            await interaction.reply({
+                content: 'This member has no history',
+                ephemeral: true,
+            });
             return;
         }
 
@@ -33,7 +38,9 @@ module.exports = {
             });
         }
 
-        await interaction.reply({ embeds: [embed], ephemeral: true });
-
-	},
+        await interaction.reply({
+            embeds: [embed],
+            ephemeral: true,
+        });
+    },
 };
