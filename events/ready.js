@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 const PunishmentManager = require('../modules/punishment_manager.js');
 const CommandUtils = require('../modules/command_utils.js');
 
-const version = '0.1.4';
+const version = '0.1.5';
 
 module.exports = {
     name: Events.ClientReady,
