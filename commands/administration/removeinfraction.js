@@ -3,9 +3,11 @@ const CommandUtils = require('../../modules/command_utils.js');
 const PunishmentManager = require('../../modules/punishment_manager.js');
 
 module.exports = {
-    data: new SlashCommandBuilder().setName('removepunishment').setDescription('Removes a punishment from a member')
-    .addStringOption((option) => option.setName('infractionid').setDescription('The ID of the punishment to remove').setRequired(true))
-    .addStringOption((option) => option.setName('reason').setDescription('The reason.').setRequired(true)),
+    data: new SlashCommandBuilder()
+        .setName('removepunishment')
+        .setDescription('Removes a punishment from a member')
+        .addStringOption((option) => option.setName('infractionid').setDescription('The ID of the punishment to remove').setRequired(true))
+        .addStringOption((option) => option.setName('reason').setDescription('The reason.').setRequired(true)),
     async execute(interaction) {
         if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.removepunishment'))) {
             return;

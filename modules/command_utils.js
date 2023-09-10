@@ -1,7 +1,5 @@
 const PermissionManager = require('./permissions_manager.js');
 const SQLManager = require('./sql_manager.js');
-const Mee6LevelsApi = require('mee6-levels-api');
-const LevelsManager = require('./levels_manager.js');
 
 module.exports = {
     EnsurePermissions,
@@ -18,7 +16,6 @@ module.exports = {
     AddPhraseBlackList,
     RemovePhraseBlackList,
     GetPhraseBlackList,
-    ConvertMee6LevelsToLlamaLevels,
     GenerateRandomString,
 };
 
@@ -31,7 +28,7 @@ async function EnsurePermissions(interaction, permission) {
             });
         } else {
             interaction.reply({
-                content: 'You don\'t have permission to run this command',
+                content: 'You dont have permission to run this command',
                 ephemeral: true,
             });
         }
@@ -200,18 +197,6 @@ async function GetPhraseBlackList() {
     } else {
         return null;
     }
-}
-
-async function ConvertMee6LevelsToLlamaLevels(member) {
-    const mee6Level = await Mee6LevelsApi.getUserXp(await GetPreference('guildid'), member.id);
-    if (mee6Level) {
-        console.log(`Converting ${member.user.username} to ${mee6Level.xp.totalXp}`);
-        await LevelsManager.SetUserXP(member, mee6Level.xp.totalXp);
-        await LevelsManager.CheckUserLevelChange(member);
-    } else {
-        console.log(`Failed to convert ${member.user.username}`);
-    }
-    return;
 }
 
 async function GenerateRandomString(length) {

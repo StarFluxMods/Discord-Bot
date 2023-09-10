@@ -3,7 +3,7 @@ const CommandUtils = require('../modules/command_utils.js');
 const PermissionManager = require('../modules/permissions_manager.js');
 const PunishmentManager = require('../modules/punishment_manager.js');
 const LogUtils = require('../modules/log_utils.js');
-const LevelManager = require('../modules/levels_manager.js');
+// const LevelManager = require('../modules/levels_manager.js');
 
 module.exports = {
     name: Events.MessageCreate,
@@ -90,7 +90,8 @@ module.exports = {
         }
 
         // Add EXP to the user
-        await LevelManager.AwardMemberEXP(message.member, Math.floor(Math.random() * (25 - 15 + 1) + 15), await CommandUtils.GetPreference('xp-cooldown'), false);
+        // Disabled for now.
+        // await LevelManager.AwardMemberEXP(message.member, Math.floor(Math.random() * (25 - 15 + 1) + 15), await CommandUtils.GetPreference('xp-cooldown'), true);
 
         // Check if the message is a KitchenDesigner link
         if (message.content.toLowerCase().includes('plateuptools.com/kitchen-designer')) {
