@@ -17,6 +17,9 @@ module.exports = {
         for (const [key, value] of Object.entries(users)) {
 
             const member = await CommandUtils.GetMember(interaction.guild, key);
+            if (!member) {
+                continue;
+            }
             await LevelsManager.SetUserXP(member, value);
             await LevelsManager.CheckUserLevelChange(member);
         }

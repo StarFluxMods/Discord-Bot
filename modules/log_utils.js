@@ -54,12 +54,12 @@ async function CreateEditLog(oldmessage, newmessage, user) {
         .addFields(
             {
                 name: 'Old Message',
-                value: oldmessage.content,
+                value: oldmessage.content ?? 'No Content',
                 inline: false,
             },
             {
                 name: 'New Message',
-                value: newmessage.content,
+                value: newmessage.content ?? 'No Content',
                 inline: false,
             },
         )

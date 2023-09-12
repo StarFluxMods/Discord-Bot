@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 const PunishmentManager = require('../modules/punishment_manager.js');
 const CommandUtils = require('../modules/command_utils.js');
 
-const version = '0.1.5';
+const version = '0.1.7';
 
 module.exports = {
     name: Events.ClientReady,
@@ -27,8 +27,11 @@ module.exports = {
         SQLManager.PhraseBlacklist.sync();
         SQLManager.Levels.sync();
 
+        ForceStatisticsChannels(client);
+
         CheckForExpiredBans(client);
         CheckForExpiredMutes(client);
+        StatisticChannels(client);
 
         client.guilds.cache
             .get(Authentication.guildId)
@@ -85,4 +88,53 @@ async function CheckForExpiredMutes(client) {
         });
         CheckForExpiredMutes(client);
     }, 2000);
+}
+
+async function StatisticChannels(client) {
+    setTimeout(async () => {
+        const guild = client.guilds.cache.get(Authentication.guildId);
+        const memberCount = guild.memberCount;
+        const oldMemberCount = await CommandUtils.GetPreference('old-member-count');
+        const lastDifferenceCheck = await CommandUtils.GetPreference('last-difference-check');
+        const difference = memberCount - oldMemberCount;
+
+        const memberCountChannel = guild.channels.cache.get(await CommandUtils.GetPreference('member-count-channel'));
+        const memberDifference = guild.channels.cache.get(await CommandUtils.GetPreference('member-difference-channel'));
+
+        if (memberDifference) {
+            if (Math.floor(Date.now() / 1000) - lastDifferenceCheck >= 86400) {
+                memberDifference.setName(`Difference: ${difference}`);
+                await CommandUtils.SetPreference('last-difference-check', Math.floor(Date.now() / 1000));
+                await CommandUtils.SetPreference('old-member-count', memberCount);
+            }
+        }
+
+        if (memberCountChannel) {
+            memberCountChannel.setName(`Members: ${memberCount}`);
+        }
+        StatisticChannels(client);
+    }, 300000);
+}
+
+async function ForceStatisticsChannels(client) {
+    const guild = client.guilds.cache.get(Authentication.guildId);
+    const memberCount = guild.memberCount;
+    const oldMemberCount = await CommandUtils.GetPreference('old-member-count');
+    const lastDifferenceCheck = await CommandUtils.GetPreference('last-difference-check');
+    const difference = memberCount - oldMemberCount;
+
+    const memberCountChannel = guild.channels.cache.get(await CommandUtils.GetPreference('member-count-channel'));
+    const memberDifference = guild.channels.cache.get(await CommandUtils.GetPreference('member-difference-channel'));
+
+    if (memberDifference) {
+        if (Math.floor(Date.now() / 1000) - lastDifferenceCheck >= 86400) {
+            memberDifference.setName(`Difference: ${difference}`);
+            await CommandUtils.SetPreference('last-difference-check', Math.floor(Date.now() / 1000));
+            await CommandUtils.SetPreference('old-member-count', memberCount);
+        }
+    }
+
+    if (memberCountChannel) {
+        memberCountChannel.setName(`Members: ${memberCount}`);
+    }
 }

@@ -11,6 +11,10 @@ module.exports = {
             return;
         }
 
+        if (oldMessage.content === newMessage.content) {
+            return;
+        }
+
         const toLower = (w) => w.toLocaleLowerCase();
         const messageLower = toLower(newMessage.content);
 
@@ -19,7 +23,7 @@ module.exports = {
 
         if ((await CommandUtils.GetPreference('enablelinkwhitelist')) === 'true') {
             // Check if the message contains a link
-            if (new RegExp('https?://(www.)?[-a-zA-Z0-9@:%._+~#=]{1,256}.[a-zA-Z0-9()]{1,6}b([-a-zA-Z0-9()@:%_+.~#?&//=]*)').test(messageLower)) {
+            if (new RegExp('https?://(www.)?[-a-zA-Z0-9@:%._+~#=]{1,256}.[a-zA-Z0-9()]{1,6}([-a-zA-Z0-9()@:%_+.~#?&//=]*)').test(messageLower)) {
                 if (!(await PermissionManager.hasPermission(newMessage.member, 'permission.links.bypass'))) {
                     let whitelist = await CommandUtils.GetLinkWhiteList();
                     console.log(whitelist);
