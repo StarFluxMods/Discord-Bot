@@ -9,7 +9,7 @@ module.exports = {
         .addUserOption((option) => option.setName('user').setDescription('The user to remove the permission from').setRequired(true))
         .addStringOption((option) => option.setName('permission').setDescription('The permission to remove from the user').setRequired(true)),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.removeuserpermission'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.removeuserpermission', true, true))) {
             return;
         }
 
@@ -17,12 +17,12 @@ module.exports = {
         const permission = interaction.options.getString('permission');
         const success = await PermissionManager.removePermissionFromUser(member.id, permission);
         if (success) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: `Removed permission \`${permission}\` from user \`${member.user.tag}\``,
                 ephemeral: true,
             });
         } else {
-            interaction.reply({
+            interaction.editReply({
                 content: `Permission \`${permission}\` does not exist for user \`${member.user.tag}\``,
                 ephemeral: true,
             });

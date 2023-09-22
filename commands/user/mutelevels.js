@@ -8,7 +8,7 @@ module.exports = {
         .setDescription('Allows you to mute level up messages')
         .addBooleanOption((option) => option.setName('mute').setDescription('Mute or unmute level up messages').setRequired(true)),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.mutelevels'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.mutelevels', true, true))) {
             return;
         }
 
@@ -28,12 +28,12 @@ module.exports = {
         await User.update({ MuteAnnouncements: mute });
 
         if (mute) {
-            interaction.reply({
+            interaction.editReply({
                 content: 'You will no longer receive level up pings',
                 ephemeral: true,
             });
         } else {
-            interaction.reply({
+            interaction.editReply({
                 content: 'You will now receive level up pings',
                 ephemeral: true,
             });

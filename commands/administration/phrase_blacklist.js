@@ -4,7 +4,7 @@ const CommandUtils = require('../../modules/command_utils.js');
 module.exports = {
     data: new SlashCommandBuilder().setName('phraseblacklist').setDescription('Displays all phrases in the blacklist'),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.phraseblacklist'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.phraseblacklist', true, true))) {
             return;
         }
 
@@ -15,7 +15,7 @@ module.exports = {
             color: 0x0000ff,
         };
 
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [embed],
             ephemeral: true,
         });

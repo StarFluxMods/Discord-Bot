@@ -12,14 +12,14 @@ module.exports = {
         .addStringOption((option) => option.setName('reason').setDescription('The reason for the mute'))
         .addNumberOption((option) => option.setName('length').setDescription('The length of the mute')),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.mute.perm')) || !(await CommandUtils.EnsurePermissions(interaction, 'commands.mute.temp'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.mute.perm', true, true)) || !(await CommandUtils.EnsurePermissions(interaction, 'commands.mute.temp'))) {
             return;
         }
 
         const muteRole = await CommandUtils.GetPreference('mute-role');
 
         if (muteRole == null) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'Preference `mute-role` has not been set.',
                 ephemeral: true,
             });
@@ -31,7 +31,7 @@ module.exports = {
         const length = interaction.options.getNumber('length') ?? 0;
 
         if (await PermissionManager.hasPermission(target, 'permission.mute-immune')) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'You cannot mute this member',
                 ephemeral: true,
             });
@@ -40,7 +40,7 @@ module.exports = {
 
         if (length == 0) {
             if (!(await PermissionManager.hasPermission(interaction.member, 'commands.mute.perm'))) {
-                await interaction.reply({
+                await interaction.editReply({
                     content: 'You do not have permission to permanently mute members',
                     ephemeral: true,
                 });
@@ -50,7 +50,7 @@ module.exports = {
 
         if (length != 0) {
             if (!(await PermissionManager.hasPermission(interaction.member, 'commands.mute.temp'))) {
-                await interaction.reply({
+                await interaction.editReply({
                     content: 'You do not have permission to temporarily mute members',
                     ephemeral: true,
                 });
@@ -60,7 +60,7 @@ module.exports = {
                 if (temppermission != false) {
                     const permissionlength = temppermission.split('commands.mute.temp.length.')[1];
                     if (length > permissionlength) {
-                        await interaction.reply({
+                        await interaction.editReply({
                             content: 'You do not have permission to mute members for this long',
                             ephemeral: true,
                         });
@@ -77,7 +77,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
         }
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [await PunishmentManager.embedBuilder(target, reason, length, interaction.member, 'mute')],
             ephemeral: true,
         });
@@ -86,7 +86,7 @@ module.exports = {
         const result = await PunishmentManager.mute(target, reason, length, interaction.member, muteRole);
 
         if (result == 0) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'This member is already muted',
                 ephemeral: true,
             });
@@ -94,7 +94,7 @@ module.exports = {
         }
 
         if (result == 2) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'Mute role has not been assigned.',
                 ephemeral: true,
             });

@@ -9,7 +9,7 @@ module.exports = {
         .addUserOption((option) => option.setName('member').setDescription('The member to get history of').setRequired(true))
         .addBooleanOption((option) => option.setName('showids').setDescription('Show infraction IDs')),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.history'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.history', true, true))) {
             return;
         }
 
@@ -18,7 +18,7 @@ module.exports = {
         const history = await PunishmentManager.getHistory(target);
 
         if (history.length == 0) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'This member has no history',
                 ephemeral: true,
             });
@@ -39,7 +39,7 @@ module.exports = {
             });
         }
 
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [embed],
             ephemeral: true,
         });

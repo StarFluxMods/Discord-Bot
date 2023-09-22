@@ -4,8 +4,9 @@ const SQLManager = require('../modules/sql_manager.js');
 const { Op } = require('sequelize');
 const PunishmentManager = require('../modules/punishment_manager.js');
 const CommandUtils = require('../modules/command_utils.js');
+const Pushover = require('node-pushover');
 
-const version = '0.1.7';
+const version = '0.1.9.2';
 
 module.exports = {
     name: Events.ClientReady,
@@ -26,6 +27,7 @@ module.exports = {
         SQLManager.LinkWhitelist.sync();
         SQLManager.PhraseBlacklist.sync();
         SQLManager.Levels.sync();
+        SQLManager.FlaggedMembers.sync();
 
         ForceStatisticsChannels(client);
 
@@ -39,8 +41,16 @@ module.exports = {
             .then(async (member) => {
                 member.setNickname('LLama (Beta) v' + version);
             });
+
+        PushNotification();
     },
 };
+
+async function PushNotification() {
+    const push = new Pushover({ token: await CommandUtils.GetPreference('app-token'), user: await CommandUtils.GetPreference('user-token') });
+
+    push.send('Bot Restarted', 'Bot has restarted');
+}
 
 async function CheckForExpiredBans(client) {
     setTimeout(() => {

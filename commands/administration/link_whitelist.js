@@ -4,7 +4,7 @@ const CommandUtils = require('../../modules/command_utils.js');
 module.exports = {
     data: new SlashCommandBuilder().setName('linkwhitelist').setDescription('Displays all links in the whitelist'),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.linkwhitelist'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.linkwhitelist', true, true))) {
             return;
         }
 
@@ -15,7 +15,7 @@ module.exports = {
             color: 0x0000ff,
         };
 
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [embed],
             ephemeral: true,
         });

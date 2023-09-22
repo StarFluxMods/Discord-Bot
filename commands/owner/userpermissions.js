@@ -9,7 +9,7 @@ module.exports = {
         .addUserOption((option) => option.setName('user').setDescription('The user to get permissions of').setRequired(true))
         .addBooleanOption((option) => option.setName('includeroles').setDescription('Include Role Permissions')),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.userpermissions'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.userpermissions', true, true))) {
             return;
         }
 
@@ -47,7 +47,8 @@ module.exports = {
             });
         }
 
-        await interaction.reply({
+        await interaction.editReply({
+            content: '',
             embeds: [embed],
             ephemeral: true,
         });

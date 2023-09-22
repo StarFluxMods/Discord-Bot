@@ -1,5 +1,6 @@
 const PermissionManager = require('./permissions_manager.js');
 const SQLManager = require('./sql_manager.js');
+const Pushover = require('node-pushover');
 
 module.exports = {
     EnsurePermissions,
@@ -17,13 +18,34 @@ module.exports = {
     RemovePhraseBlackList,
     GetPhraseBlackList,
     GenerateRandomString,
+    IsMemberFlagged,
+    SecondsToTimeString,
+    SendModerationNotification,
 };
 
-async function EnsurePermissions(interaction, permission) {
+async function EnsurePermissions(interaction, permission, edit = false, ephemeral = false) {
+    if (edit) {
+        await interaction.reply({ content: 'Just a minute, I\'m thinking...', ephemeral: ephemeral });
+    }
     if (!(await PermissionManager.hasPermission(interaction.member, permission))) {
         if (await PermissionManager.hasPermission(interaction.member, 'permission.view-missing')) {
-            interaction.reply({
-                content: `You are require \`${permission}\` to run this command.`,
+            if (edit) {
+                interaction.editReply({
+                    content: `You are require \`${permission}\` to run this command.`,
+                    ephemeral: true,
+                });
+            } else {
+                interaction.reply({
+                    content: `You are require \`${permission}\` to run this command.`,
+                    ephemeral: true,
+                });
+            }
+            return false;
+        }
+
+        if (edit) {
+            interaction.editReply({
+                content: 'You dont have permission to run this command',
                 ephemeral: true,
             });
         } else {
@@ -32,6 +54,7 @@ async function EnsurePermissions(interaction, permission) {
                 ephemeral: true,
             });
         }
+
         return false;
     }
     return true;
@@ -207,4 +230,77 @@ async function GenerateRandomString(length) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+}
+
+async function IsMemberFlagged(member) {
+    const flaggedMember = await SQLManager.FlaggedMembers.findOne({
+        where: {
+            UserID: member.id,
+        },
+    });
+
+    if (flaggedMember != null) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+async function SecondsToTimeString(seconds) {
+    let result = '';
+    const years = Math.floor(seconds / 31449600);
+    if (years > 0) {
+        result += `${years} years `;
+        seconds -= years * 31449600;
+    }
+    const weeks = Math.floor(seconds / 604800);
+    if (weeks > 0) {
+        result += `${weeks} weeks `;
+        seconds -= weeks * 604800;
+    }
+    const days = Math.floor(seconds / 86400);
+    if (days > 0) {
+        result += `${days} days `;
+        seconds -= days * 86400;
+    }
+    const hours = Math.floor(seconds / 3600);
+    if (hours > 0) {
+        result += `${hours} hours `;
+        seconds -= hours * 3600;
+    }
+    const minutes = Math.floor(seconds / 60);
+    if (minutes > 0) {
+        result += `${minutes} minutes `;
+        seconds -= minutes * 60;
+    }
+    if (seconds > 0) {
+        result += `${seconds} seconds `;
+    }
+    return result;
+}
+
+async function SendModerationNotification(title, content, client = null) {
+    const push = new Pushover({ token: await GetPreference('app-token'), user: await GetPreference('user-token') });
+    push.send(title, content);
+
+    const embed = {
+        title: title,
+        description: content,
+        color: 0x00ff00,
+    };
+
+    if (client != null) {
+        const channel = await client.channels.fetch(await GetPreference('moderation-notification-channel'));
+        const role = await GetPreference('moderation-notification-role');
+
+        if (!channel) {
+            return;
+        }
+
+        if (role) {
+            channel.send({ content: '<@&' + role + '>', embeds: [embed] });
+            return;
+        }
+        channel.send({ embeds: [embed] });
+    }
 }

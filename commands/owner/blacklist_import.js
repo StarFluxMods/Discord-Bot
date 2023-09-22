@@ -8,14 +8,14 @@ module.exports = {
         .setDescription('Adds a phrase to the blacklist')
         .addStringOption((option) => option.setName('jsonpath').setDescription('The path to the JSON file').setRequired(true)),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.blacklistimport'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.blacklistimport', true, true))) {
             return;
         }
 
         const jsonPath = interaction.options.getString('jsonpath');
 
         if (!fs.existsSync(jsonPath)) {
-            interaction.reply({
+            interaction.editReply({
                 content: `Could not find \`${jsonPath}\`.`,
                 ephemeral: true,
             });
@@ -29,7 +29,7 @@ module.exports = {
             await CommandUtils.AddPhraseBlackList(phrase);
         }
 
-        interaction.reply({
+        interaction.editReply({
             content: `Added \`${json.length}\` phrases to the phrase blacklist.`,
             ephemeral: true,
         });

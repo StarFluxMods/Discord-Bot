@@ -9,7 +9,7 @@ module.exports = {
         .addRoleOption((option) => option.setName('role').setDescription('The role to add the permission to').setRequired(true))
         .addStringOption((option) => option.setName('permission').setDescription('The permission to add to the role').setRequired(true)),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.addpermission'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.addpermission', true, true))) {
             return;
         }
 
@@ -17,12 +17,12 @@ module.exports = {
         const permission = interaction.options.getString('permission');
         const success = await PermissionManager.addPermission(role.id, permission);
         if (success) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: `Added permission \`${permission}\` to role \`${role.name}\``,
                 ephemeral: true,
             });
         } else {
-            interaction.reply({
+            interaction.editReply({
                 content: `Permission \`${permission}\` already exists for role \`${role.name}\``,
                 ephemeral: true,
             });

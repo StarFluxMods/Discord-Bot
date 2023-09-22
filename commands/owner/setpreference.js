@@ -8,7 +8,7 @@ module.exports = {
         .addStringOption((option) => option.setName('key').setDescription('The preference key to change').setRequired(true))
         .addStringOption((option) => option.setName('value').setDescription('The value to set the key').setRequired(true)),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.setpreference'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.setpreference', true, true))) {
             return;
         }
 
@@ -18,12 +18,12 @@ module.exports = {
         const success = await CommandUtils.SetPreference(key, value);
 
         if (success) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: `Set preference \`${key}\` to \`${value}\``,
                 ephemeral: true,
             });
         } else {
-            await interaction.reply({
+            await interaction.editReply({
                 content: `Updated preference \`${key}\` to \`${value}\``,
                 ephemeral: true,
             });

@@ -87,6 +87,7 @@ async function getPermissions(role) {
     const permissions = await SQLManager.Permissions.findAll({
         where: { RoleID: role },
     });
+
     return permissions.map((permission) => permission.Permission);
 }
 

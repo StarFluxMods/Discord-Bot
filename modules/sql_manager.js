@@ -45,6 +45,11 @@ module.exports = {
             type: Sequelize.STRING,
         },
     }),
+    FlaggedMembers: sequelize.define('flagged-members', {
+        UserID: {
+            type: Sequelize.STRING,
+        },
+    }),
     LinkWhitelist: sequelize.define('link-whitelist', {
         Link: {
             type: Sequelize.STRING,

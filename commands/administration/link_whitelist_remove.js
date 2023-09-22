@@ -7,7 +7,7 @@ module.exports = {
         .setDescription('Removes a link to the whitelist')
         .addStringOption((option) => option.setName('link').setDescription('The link to remove from the whitelist').setRequired(true)),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.linkwhitelistremove'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.linkwhitelistremove', true, true))) {
             return;
         }
 
@@ -15,12 +15,12 @@ module.exports = {
 
         const result = await CommandUtils.RemoveLinkWhiteList(link);
         if (result) {
-            interaction.reply({
+            interaction.editReply({
                 content: `Removed \`${link}\` from the link whitelist.`,
                 ephemeral: true,
             });
         } else {
-            interaction.reply({
+            interaction.editReply({
                 content: `Could not find \`${link}\` in the link whitelist.`,
                 ephemeral: true,
             });

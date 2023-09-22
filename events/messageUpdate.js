@@ -19,7 +19,17 @@ module.exports = {
         const messageLower = toLower(newMessage.content);
 
         const embed = await LogUtils.CreateEditLog(oldMessage, newMessage, newMessage.author);
-        LogUtils.SendEmbed(newMessage.client, 'chat-logs', embed);
+        if (embed != null) {
+            LogUtils.SendEmbed(newMessage.client, 'chat-logs', embed);
+        } else {
+            const newEmbed = {
+                title: '[EDIT] ' + newMessage.author.username,
+                desctiption: 'Something went wrong when creating the edit log. Please check the bot logs.',
+            };
+
+            LogUtils.SendEmbed(newMessage.client, 'chat-logs', newEmbed);
+        }
+
 
         if ((await CommandUtils.GetPreference('enablelinkwhitelist')) === 'true') {
             // Check if the message contains a link

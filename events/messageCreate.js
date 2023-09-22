@@ -70,7 +70,7 @@ module.exports = {
 
         const mentions = message.mentions.members;
         if (mentions) {
-            mentions.forEach(async (element) => {
+            await mentions.forEach(async (element) => {
                 if (await PermissionManager.hasPermission(element, 'permission.blockmention', true)) {
                     if (!(await PermissionManager.hasPermission(message.member, 'permission.blockmention.bypass'))) {
                         await PunishmentManager.warn(message.author, null, 'You are not allowed to mention user <@' + element.id + '>');
@@ -87,6 +87,12 @@ module.exports = {
                     }
                 }
             });
+        }
+
+        // Check if user is flagged
+
+        if (await CommandUtils.IsMemberFlagged(message.member)) {
+            CommandUtils.SendModerationNotification('Flagged Member', 'Member : ' + message.author.tag + '\nMessage : ' + message.content + '\nChannel : ' + message.channel.name, message.client);
         }
 
         // Add EXP to the user

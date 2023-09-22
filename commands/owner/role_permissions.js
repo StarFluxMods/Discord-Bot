@@ -8,7 +8,7 @@ module.exports = {
         .setDescription('Displays a roles individual permissions')
         .addRoleOption((option) => option.setName('role').setDescription('The role to get permissions of').setRequired(true)),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.rolepermissions'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.rolepermissions', true, true))) {
             return;
         }
 
@@ -29,7 +29,7 @@ module.exports = {
             color: 0x0000ff,
         };
 
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [embed],
             ephemeral: true,
         });

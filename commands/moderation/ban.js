@@ -12,7 +12,7 @@ module.exports = {
         .addStringOption((option) => option.setName('reason').setDescription('The reason for the ban'))
         .addNumberOption((option) => option.setName('length').setDescription('The length of the ban')),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.ban.perm')) || !(await CommandUtils.EnsurePermissions(interaction, 'commands.ban.temp'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.ban.perm', true, true)) || !(await CommandUtils.EnsurePermissions(interaction, 'commands.ban.temp'))) {
             return;
         }
 
@@ -21,7 +21,7 @@ module.exports = {
         const length = interaction.options.getNumber('length') ?? 0;
 
         if (await PermissionManager.hasPermission(target, 'permission.ban-immune')) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'You cannot ban this member',
                 ephemeral: true,
             });
@@ -30,7 +30,7 @@ module.exports = {
 
         if (length == 0) {
             if (!(await PermissionManager.hasPermission(interaction.member, 'commands.ban.perm'))) {
-                await interaction.reply({
+                await interaction.editReply({
                     content: 'You do not have permission to permanently ban members',
                     ephemeral: true,
                 });
@@ -40,7 +40,7 @@ module.exports = {
 
         if (length != 0) {
             if (!(await PermissionManager.hasPermission(interaction.member, 'commands.ban.temp'))) {
-                await interaction.reply({
+                await interaction.editReply({
                     content: 'You do not have permission to temporarily ban members',
                     ephemeral: true,
                 });
@@ -50,7 +50,7 @@ module.exports = {
                 if (temppermission != false) {
                     const permissionlength = temppermission.split('commands.ban.temp.length.')[1];
                     if (length > permissionlength) {
-                        await interaction.reply({
+                        await interaction.editReply({
                             content: 'You do not have permission to ban members for this long',
                             ephemeral: true,
                         });
@@ -68,7 +68,7 @@ module.exports = {
             console.log(error);
         }
 
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [await PunishmentManager.embedBuilder(target, reason, length, interaction.member, 'ban')],
             ephemeral: true,
         });
@@ -77,7 +77,7 @@ module.exports = {
         const result = await PunishmentManager.ban(target, reason, length, interaction.member);
 
         if (!result) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'This member is already banned',
                 ephemeral: true,
             });

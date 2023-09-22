@@ -11,7 +11,7 @@ module.exports = {
         .addUserOption((option) => option.setName('member').setDescription('The member to kick').setRequired(true))
         .addStringOption((option) => option.setName('reason').setDescription('The reason for the kick')),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.kick'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.kick', true, true))) {
             return;
         }
 
@@ -19,7 +19,7 @@ module.exports = {
         const reason = interaction.options.getString('reason') ?? 'No reason provided';
 
         if (await PermissionManager.hasPermission(target, 'permission.kick-immune')) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'You cannot kick this member',
                 ephemeral: true,
             });
@@ -33,7 +33,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
         }
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [await PunishmentManager.embedBuilder(target, reason, -1, interaction.member, 'kick')],
             ephemeral: true,
         });

@@ -4,14 +4,14 @@ const CommandUtils = require('../../modules/command_utils.js');
 module.exports = {
     data: new SlashCommandBuilder().setName('botchannels').setDescription('Lists Bot Channels'),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.botchannels'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.botchannels', true, true))) {
             return;
         }
 
         const botChannels = await CommandUtils.GetBotChannels();
 
         if (botChannels.length === 0) {
-            interaction.reply({
+            interaction.editReply({
                 content: 'There are no bot channels.',
                 ephemeral: true,
             });
@@ -20,7 +20,7 @@ module.exports = {
 
         const botChannelList = botChannels.map((channel) => `<#${channel}>`).join('\n');
 
-        interaction.reply({
+        interaction.editReply({
             content: `Bot Channels:\n${botChannelList}`,
             ephemeral: true,
         });

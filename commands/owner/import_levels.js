@@ -8,7 +8,7 @@ module.exports = {
         .setName('importlevels')
         .setDescription('Imports the users.json file from the config folder.'),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.importlevels'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.importlevels', true, true))) {
             return;
         }
 
@@ -24,7 +24,7 @@ module.exports = {
             await LevelsManager.CheckUserLevelChange(member);
         }
 
-        interaction.reply({
+        interaction.editReply({
             content: 'Imported users.json',
             ephemeral: true,
         });

@@ -48,7 +48,8 @@ async function SendMessage(client, channel, message) {
 }
 
 async function CreateEditLog(oldmessage, newmessage, user) {
-    const embed = new EmbedBuilder()
+    try {
+        const embed = new EmbedBuilder()
         .setTitle('[EDIT] ' + user.username)
         .setURL(newmessage.url)
         .addFields(
@@ -71,6 +72,10 @@ async function CreateEditLog(oldmessage, newmessage, user) {
         .setTimestamp();
 
     return embed;
+    } catch {
+        return null;
+    }
+
 }
 
 async function CreateDeleteLog(message, user) {

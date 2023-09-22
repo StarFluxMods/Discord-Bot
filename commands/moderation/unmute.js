@@ -10,14 +10,14 @@ module.exports = {
         .addUserOption((option) => option.setName('member').setDescription('The member to unmute').setRequired(true))
         .addStringOption((option) => option.setName('reason').setDescription('The reason for the unmute')),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.unmute'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.unmute', true, true))) {
             return;
         }
 
         const muteRole = await CommandUtils.GetPreference('mute-role');
 
         if (muteRole == null) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'Preference `mute-role` has not been set.',
                 ephemeral: true,
             });
@@ -30,14 +30,14 @@ module.exports = {
         const result = await PunishmentManager.unmute(target, interaction.member, reason, muteRole);
 
         if (!result) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'This member is not muted',
                 ephemeral: true,
             });
             return;
         }
 
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [await PunishmentManager.embedBuilder(target, reason, -1, interaction.member, 'unmute')],
             ephemeral: true,
         });

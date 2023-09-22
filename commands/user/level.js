@@ -5,7 +5,7 @@ const LevelManager = require('../../modules/levels_manager.js');
 module.exports = {
     data: new SlashCommandBuilder().setName('level').setDescription('Provides users level information'),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.level'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.level', true, false))) {
             return;
         }
 
@@ -21,12 +21,14 @@ module.exports = {
             bar += '▱';
         }
 
+
         const embed = new EmbedBuilder()
             .setTitle(`${interaction.member.displayName}'s Level`)
             .setDescription(`Level: ${await LevelManager.GetUserLevel(interaction.member)}\nXP: ${await LevelManager.GetUserXP(interaction.member)}\n\n${bar} ${percent}%`)
             .setColor('#00ff00')
             .setThumbnail(interaction.member.user.avatarURL());
 
-        await interaction.reply({ embeds: [embed] });
+        await interaction.editReply({ content: '', embeds: [embed] });
+
     },
 };

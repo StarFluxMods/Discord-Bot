@@ -9,7 +9,7 @@ module.exports = {
         .addStringOption((option) => option.setName('infractionid').setDescription('The ID of the punishment to remove').setRequired(true))
         .addStringOption((option) => option.setName('reason').setDescription('The reason.').setRequired(true)),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.removepunishment'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.removepunishment', true, true))) {
             return;
         }
 
@@ -18,7 +18,7 @@ module.exports = {
 
         const infraction = await PunishmentManager.getInfractionByID(infractionID);
         if (!infraction) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'Invalid infraction ID',
                 ephemeral: true,
             });
@@ -28,12 +28,12 @@ module.exports = {
         const result = await PunishmentManager.clearInfraction(infractionID, interaction.user, reason);
 
         if (result) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: `Removed punishment ${infraction.Type} from ${infraction.Member} (${infraction.Member})`,
                 ephemeral: true,
             });
         } else {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'Failed to remove punishment',
                 ephemeral: true,
             });

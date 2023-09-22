@@ -7,7 +7,7 @@ module.exports = {
         .setDescription('Adds a phrase to the blacklist')
         .addStringOption((option) => option.setName('phrase').setDescription('The phrase to add to the blacklist').setRequired(true)),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.phraseblacklistadd'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.phraseblacklistadd', true, true))) {
             return;
         }
 
@@ -15,12 +15,12 @@ module.exports = {
 
         const result = await CommandUtils.AddPhraseBlackList(phrase);
         if (result) {
-            interaction.reply({
+            interaction.editReply({
                 content: `Added \`${phrase}\` to the phrase blacklist.`,
                 ephemeral: true,
             });
         } else {
-            interaction.reply({
+            interaction.editReply({
                 content: `Updated \`${phrase}\` in the phrase blacklist.`,
                 ephemeral: true,
             });

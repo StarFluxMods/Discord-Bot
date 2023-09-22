@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
 const LogUtils = require('../modules/log_utils.js');
+const CommandUtils = require('../modules/command_utils.js');
 
 module.exports = {
     name: Events.GuildMemberAdd,
@@ -8,5 +9,15 @@ module.exports = {
 
         const embed = await LogUtils.CreateJoinLog(member);
         LogUtils.SendEmbed(member.client, 'user-logs', embed);
+
+        const created = Math.floor(member.user.createdTimestamp / 1000);
+        const current = Math.floor(Date.now() / 1000);
+        const difference = current - created;
+        const createdString = await CommandUtils.SecondsToTimeString(difference);
+
+        if (difference < 604800) {
+            CommandUtils.SendModerationNotification('Suspicious Member', 'Username: ' + member.user.tag + '\nCreated: ' + createdString + ' ago', member.client);
+        }
+
     },
 };

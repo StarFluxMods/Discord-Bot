@@ -11,7 +11,7 @@ module.exports = {
         .addUserOption((option) => option.setName('member').setDescription('The member to warn').setRequired(true))
         .addStringOption((option) => option.setName('reason').setDescription('The reason for the warning')),
     async execute(interaction) {
-        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.warn'))) {
+        if (!(await CommandUtils.EnsurePermissions(interaction, 'commands.warn', true, true))) {
             return;
         }
 
@@ -19,7 +19,7 @@ module.exports = {
         const reason = interaction.options.getString('reason') ?? 'No reason provided';
 
         if (await PermissionManager.hasPermission(target, 'permission.warn-immune')) {
-            await interaction.reply({
+            await interaction.editReply({
                 content: 'You cannot warn this member',
                 ephemeral: true,
             });
@@ -34,7 +34,7 @@ module.exports = {
             console.log(error);
         }
 
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [await PunishmentManager.embedBuilder(target, reason, -1, interaction.member, 'warn')],
             ephemeral: true,
         });
