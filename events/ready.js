@@ -6,7 +6,7 @@ const PunishmentManager = require('../modules/punishment_manager.js');
 const CommandUtils = require('../modules/command_utils.js');
 const Pushover = require('node-pushover');
 
-const version = '0.1.9.2';
+const version = '0.1.9.4';
 
 module.exports = {
     name: Events.ClientReady,

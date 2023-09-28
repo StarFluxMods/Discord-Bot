@@ -48,6 +48,9 @@ async function SendMessage(client, channel, message) {
 }
 
 async function CreateEditLog(oldmessage, newmessage, user) {
+    if (!oldmessage.content || !newmessage.content) {
+        return;
+    }
     try {
         const embed = new EmbedBuilder()
         .setTitle('[EDIT] ' + user.username)
@@ -79,13 +82,19 @@ async function CreateEditLog(oldmessage, newmessage, user) {
 }
 
 async function CreateDeleteLog(message, user) {
+    if (!message.content) {
+        return;
+    }
+
     const embed = new EmbedBuilder()
         .setTitle('[DELETE] ' + user.username)
-        .addFields({
-            name: 'Deleted Message',
-            value: message.content,
-            inline: false,
-        })
+        .addFields(
+            {
+                name: 'Deleted Message',
+                value: message.content,
+                inline: false,
+            },
+        )
         .setThumbnail(await user.avatarURL())
         .setColor('#ff0000')
         .setFooter({
@@ -97,7 +106,11 @@ async function CreateDeleteLog(message, user) {
 }
 
 async function CreateModDeleteLog(message, phrase, user) {
-    const embed = new EmbedBuilder()
+    if (!message.content) {
+        return;
+    }
+
+        const embed = new EmbedBuilder()
         .setTitle('[DELETE] ' + user.username)
         .addFields(
             {
