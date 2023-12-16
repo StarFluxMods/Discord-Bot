@@ -4,6 +4,7 @@ const PermissionManager = require('../modules/permissions_manager.js');
 const PunishmentManager = require('../modules/punishment_manager.js');
 const LogUtils = require('../modules/log_utils.js');
 const LevelManager = require('../modules/levels_manager.js');
+const SQLManager = require('../modules/sql_manager.js');
 
 module.exports = {
     name: Events.MessageCreate,
@@ -12,7 +13,9 @@ module.exports = {
         if (message.author.bot) {
             if (!(await CommandUtils.IsBotChannel(message.channel.id))) {
                 if (message.author.id == message.client.user.id) {
-                    message.react('🗑️');
+                    if (await SQLManager.DoNotFlagAsDeletable.findOne({ where: { MessageID: message.id } }) != null) {
+                        message.react('🗑️');
+                    }
                 }
             }
             return;

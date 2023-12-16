@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
 const LogUtils = require('../modules/log_utils.js');
 const CommandUtils = require('../modules/command_utils.js');
+const SQLManager = require('../modules/sql_manager.js');
 
 module.exports = {
     name: Events.GuildMemberAdd,
@@ -19,5 +20,15 @@ module.exports = {
             CommandUtils.SendModerationNotification('Suspicious Member', 'Username: ' + member.user.tag + '\nCreated: ' + createdString + ' ago', member.client);
         }
 
+        const flaggedMember = await SQLManager.FlaggedMembers.findOne({
+            where: {
+                UserID: member.id,
+            },
+        });
+        if (flaggedMember == null) {
+            await SQLManager.FlaggedMembers.create({
+                UserID: member.id,
+            });
+        }
     },
 };

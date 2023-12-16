@@ -23,9 +23,9 @@ module.exports = {
     SendModerationNotification,
 };
 
-async function EnsurePermissions(interaction, permission, edit = false, ephemeral = false) {
+async function EnsurePermissions(interaction, permission, edit = false, ephemeral = false, waitingText = 'Just a minute, I\'m thinking...') {
     if (edit) {
-        await interaction.reply({ content: 'Just a minute, I\'m thinking...', ephemeral: ephemeral });
+        await interaction.reply({ content: waitingText, ephemeral: ephemeral });
     }
     if (!(await PermissionManager.hasPermission(interaction.member, permission))) {
         if (await PermissionManager.hasPermission(interaction.member, 'permission.view-missing')) {

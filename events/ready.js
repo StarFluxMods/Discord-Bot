@@ -6,7 +6,7 @@ const PunishmentManager = require('../modules/punishment_manager.js');
 const CommandUtils = require('../modules/command_utils.js');
 const Pushover = require('node-pushover');
 
-const version = '0.1.9.4';
+const version = '0.2.2';
 
 module.exports = {
     name: Events.ClientReady,
@@ -28,6 +28,7 @@ module.exports = {
         SQLManager.PhraseBlacklist.sync();
         SQLManager.Levels.sync();
         SQLManager.FlaggedMembers.sync();
+        SQLManager.DoNotFlagAsDeletable.sync();
 
         ForceStatisticsChannels(client);
 

@@ -229,4 +229,9 @@ module.exports = {
             type: Sequelize.NUMBER,
         },
     }),
+    DoNotFlagAsDeletable: sequelize.define('do-not-flag-as-deletable', {
+        MessageID: {
+            type: Sequelize.STRING,
+        },
+    }),
 };
